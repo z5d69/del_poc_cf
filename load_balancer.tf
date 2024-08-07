@@ -22,8 +22,13 @@ tags = var.common_tags
 }
 
 # Associate Network Interface to the Backend Pool of the Load Balancer
-resource "azurerm_network_interface_backend_address_pool_association" "nic_lb_pool" {
+/* resource "azurerm_network_interface_backend_address_pool_association" "nic_lb_pool" {
   network_interface_id    = azurerm_network_interface.lbinternal.id
+  ip_configuration_name   = "ipconfig"
+  backend_address_pool_id = azurerm_lb_backend_address_pool.lb_pool_backend_address_pool.id
+} */
+resource "azurerm_network_interface_backend_address_pool_association" "nic_lb_pool" {
+  network_interface_id    = azurerm_network_interface.webserver.id
   ip_configuration_name   = "ipconfig"
   backend_address_pool_id = azurerm_lb_backend_address_pool.lb_pool_backend_address_pool.id
 }
@@ -76,26 +81,10 @@ resource "azurerm_lb_nat_rule" "web_lb_inbound_nat_rule_http" {
   loadbalancer_id                = azurerm_lb.load_balancer.id
 }
 
-resource "azurerm_lb_nat_rule" "web_lb_inbound_nat_rule_ssh" {
-  name                           = "sshinbound"
-  protocol                       = "Tcp"
-  frontend_port                  = 22
-  backend_port                   = 22
-  frontend_ip_configuration_name = azurerm_lb.load_balancer.frontend_ip_configuration[0].name  
-  resource_group_name            = azurerm_resource_group.resource_group.name
-  loadbalancer_id                = azurerm_lb.load_balancer.id
-}
-
 resource "azurerm_network_interface_nat_rule_association" "web_lb_inbound_nat_rule_http_associate" {
   network_interface_id  = azurerm_network_interface.webserver.id
   ip_configuration_name = azurerm_network_interface.webserver.ip_configuration[0].name
   nat_rule_id           = azurerm_lb_nat_rule.web_lb_inbound_nat_rule_http.id
-}
-
-resource "azurerm_network_interface_nat_rule_association" "web_lb_inbound_nat_rule_ssh_associate" {
-  network_interface_id  = azurerm_network_interface.webserver.id
-  ip_configuration_name = azurerm_network_interface.webserver.ip_configuration[0].name
-  nat_rule_id           = azurerm_lb_nat_rule.web_lb_inbound_nat_rule_ssh.id
 }
 
 resource "azurerm_lb_outbound_rule" "lb_outbound_rule" {

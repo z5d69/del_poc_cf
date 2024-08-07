@@ -1,7 +1,7 @@
 variable "vnetname" {
     type=string
     description = "this is the vnet name for this deployment"
-    default = "vnetpoccf"
+    default = "vnetpoccfsbx"
 }
 
 variable "azregion" {
@@ -13,7 +13,7 @@ variable "azregion" {
 variable "resource_group_name" {
     type=string
     description = "This is the resource group for resources to deploy in"
-    default = "rgpoccf"
+    default = "rgpoccfsbx"
 }
 
 variable "keyvaultname" {

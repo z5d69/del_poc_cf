@@ -16,6 +16,7 @@ Build Inventory: this will include the list of scripts and a summary of their pu
   modules\subnet\subnet.tf - basically a Terraform version of function to automate consistent configuration of subnets.
   vm.tf - create all the VMs as well as NICs for VMs and associate NICs with subnets.
   load_balancer.tf - creates load balancer that sits in front of sub3 web server.
+  rhelapache.sh - installs and starts up the web server (apache) for one of the VMs.  
 
 Build process: 
   more details here: 

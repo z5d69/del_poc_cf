@@ -95,3 +95,87 @@ resource "azurerm_linux_virtual_machine" "rhelconnect" {
   }
 tags = var.common_tags  
 }
+
+resource "azurerm_network_interface" "vmmember1" {
+  name                = "rhelmbr1-nic"
+  location            = azurerm_resource_group.resource_group.location
+  resource_group_name = azurerm_resource_group.resource_group.name
+
+  ip_configuration {
+    name                          = "ipconfig"
+    subnet_id                     = "${module.sub1.subnetid}"
+    private_ip_address_allocation = "Static"
+    private_ip_address            = "10.0.0.10"
+  }
+tags = var.common_tags  
+}
+
+resource "azurerm_network_interface" "vmmember2" {
+  name                = "rhelmbr2-nic"
+  location            = azurerm_resource_group.resource_group.location
+  resource_group_name = azurerm_resource_group.resource_group.name
+
+  ip_configuration {
+    name                          = "ipconfig"
+    subnet_id                     = "${module.sub1.subnetid}"
+    private_ip_address_allocation = "Static"
+    private_ip_address            = "10.0.0.11"
+  }
+tags = var.common_tags  
+}
+
+resource "azurerm_linux_virtual_machine" "rhelmbr1" {
+  name                = "vmrhel8mbr1"
+  resource_group_name = azurerm_resource_group.resource_group.name
+  location            = azurerm_resource_group.resource_group.location
+  size                = "Standard_DS1_v2"
+  admin_username      = "adminuser"
+  network_interface_ids = [
+    azurerm_network_interface.vmmember1.id
+  ]
+  availability_set_id = azurerm_availability_set.availability_set.id
+  disable_password_authentication = "false"
+  admin_password = "test4me!!"
+
+  os_disk {
+    caching              = "ReadWrite"
+    storage_account_type = "Standard_LRS"
+    disk_size_gb = 256
+  }
+
+  source_image_reference {
+    publisher = "RedHat"
+    offer     = "RHEL"
+    sku       = "86-gen2"
+    version   = "latest"
+  }
+tags = var.common_tags  
+}
+
+resource "azurerm_linux_virtual_machine" "rhelmbr2" {
+  name                = "vmrhel8mbr2"
+  resource_group_name = azurerm_resource_group.resource_group.name
+  location            = azurerm_resource_group.resource_group.location
+  size                = "Standard_DS1_v2"
+  admin_username      = "adminuser"
+  network_interface_ids = [
+    azurerm_network_interface.vmmember2.id
+  ]
+  availability_set_id = azurerm_availability_set.availability_set.id  
+  disable_password_authentication = "false"
+  admin_password = "test4me!!"
+
+  os_disk {
+    caching              = "ReadWrite"
+    storage_account_type = "Standard_LRS"
+    disk_size_gb = 256
+  }
+
+  source_image_reference {
+    publisher = "RedHat"
+    offer     = "RHEL"
+    sku       = "86-gen2"
+    version   = "latest"
+  }
+tags = var.common_tags  
+}

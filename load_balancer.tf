@@ -57,13 +57,11 @@ resource "azurerm_lb_backend_address_pool" "lb_pool_backend_address_pool" {
 resource "azurerm_lb_nat_rule" "web_lb_inbound_nat_rule_http" {
   name                           = "httpinbound"
   protocol                       = "Tcp"
-  frontend_port_start            = 80
-  frontend_port_end              = 80
+  frontend_port                  = 80
   backend_port                   = 80
   frontend_ip_configuration_name = azurerm_lb.load_balancer.frontend_ip_configuration[0].name  
   resource_group_name            = azurerm_resource_group.resource_group.name
   loadbalancer_id                = azurerm_lb.load_balancer.id
-  backend_address_pool_id        = azurerm_lb_backend_address_pool.lb_pool_backend_address_pool.id 
 }
 
 resource "azurerm_network_interface_nat_rule_association" "web_lb_inbound_nat_rule_http_associate" {

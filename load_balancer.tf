@@ -45,11 +45,13 @@ resource "azurerm_lb_backend_address_pool" "lb_pool_backend_address_pool" {
   name                 = "lb-pool"
 }
 
-resource "azurerm_lb_probe" "my_lb_probe" {
+
+/* resource "azurerm_lb_probe" "my_lb_probe" {
   loadbalancer_id     = azurerm_lb.load_balancer.id
   name                = "lb-probe"
   port                = 80
-}
+} */
+
 /* 
 resource "azurerm_lb_rule" "lb_rule_80" {
   loadbalancer_id                = azurerm_lb.load_balancer.id
@@ -64,7 +66,7 @@ resource "azurerm_lb_rule" "lb_rule_80" {
 }
  */
 ##?
-resource "azurerm_lb_nat_rule" "web_lb_inbound_nat_rule_80" {
+resource "azurerm_lb_nat_rule" "web_lb_inbound_nat_rule_http" {
   name                           = "httpinbound"
   protocol                       = "Tcp"
   frontend_port                  = 80
@@ -74,8 +76,35 @@ resource "azurerm_lb_nat_rule" "web_lb_inbound_nat_rule_80" {
   loadbalancer_id                = azurerm_lb.load_balancer.id
 }
 
-resource "azurerm_network_interface_nat_rule_association" "web_lb_inbound_nat_rule_80_associate" {
+resource "azurerm_lb_nat_rule" "web_lb_inbound_nat_rule_ssh" {
+  name                           = "sshinbound"
+  protocol                       = "Tcp"
+  frontend_port                  = 22
+  backend_port                   = 22
+  frontend_ip_configuration_name = azurerm_lb.load_balancer.frontend_ip_configuration[0].name  
+  resource_group_name            = azurerm_resource_group.resource_group.name
+  loadbalancer_id                = azurerm_lb.load_balancer.id
+}
+
+resource "azurerm_network_interface_nat_rule_association" "web_lb_inbound_nat_rule_http_associate" {
   network_interface_id  = azurerm_network_interface.webserver.id
   ip_configuration_name = azurerm_network_interface.webserver.ip_configuration[0].name
-  nat_rule_id           = azurerm_lb_nat_rule.web_lb_inbound_nat_rule_80.id
+  nat_rule_id           = azurerm_lb_nat_rule.web_lb_inbound_nat_rule_http.id
+}
+
+resource "azurerm_network_interface_nat_rule_association" "web_lb_inbound_nat_rule_ssh_associate" {
+  network_interface_id  = azurerm_network_interface.webserver.id
+  ip_configuration_name = azurerm_network_interface.webserver.ip_configuration[0].name
+  nat_rule_id           = azurerm_lb_nat_rule.web_lb_inbound_nat_rule_ssh.id
+}
+
+resource "azurerm_lb_outbound_rule" "lb_outbound_rule" {
+  name                    = "lb_outbound_rule"
+  loadbalancer_id         = azurerm_lb.load_balancer.id
+  protocol                = "Tcp"
+  backend_address_pool_id = azurerm_lb_backend_address_pool.lb_pool_backend_address_pool.id
+
+  frontend_ip_configuration {
+    name = "iplbpoccf"
+  }
 }

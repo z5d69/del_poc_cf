@@ -22,11 +22,7 @@ tags = var.common_tags
 }
 
 # Associate Network Interface to the Backend Pool of the Load Balancer
-/* resource "azurerm_network_interface_backend_address_pool_association" "nic_lb_pool" {
-  network_interface_id    = azurerm_network_interface.lbinternal.id
-  ip_configuration_name   = "ipconfig"
-  backend_address_pool_id = azurerm_lb_backend_address_pool.lb_pool_backend_address_pool.id
-} */
+
 resource "azurerm_network_interface_backend_address_pool_association" "nic_lb_pool" {
   network_interface_id    = azurerm_network_interface.webserver.id
   ip_configuration_name   = "ipconfig"
@@ -57,20 +53,7 @@ resource "azurerm_lb_backend_address_pool" "lb_pool_backend_address_pool" {
   port                = 80
 } */
 
-/* 
-resource "azurerm_lb_rule" "lb_rule_80" {
-  loadbalancer_id                = azurerm_lb.load_balancer.id
-  name                           = "test-rule"
-  protocol                       = "Tcp"
-  frontend_port                  = 80
-  backend_port                   = 80
-  disable_outbound_snat          = true
-  frontend_ip_configuration_name = azurerm_public_ip.publiciplb.name
-  probe_id                       = azurerm_lb_probe.my_lb_probe.id
-  backend_address_pool_ids       = [azurerm_lb_backend_address_pool.lb_pool_backend_address_pool.id]
-}
- */
-##?
+
 resource "azurerm_lb_nat_rule" "web_lb_inbound_nat_rule_http" {
   name                           = "httpinbound"
   protocol                       = "Tcp"

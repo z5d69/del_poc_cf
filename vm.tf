@@ -63,6 +63,7 @@ resource "azurerm_linux_virtual_machine" "rhelapache" {
     version   = "latest"
   }
 tags = var.common_tags  
+depends_on = [azurerm_network_interface_nat_rule_association.web_lb_inbound_nat_rule_http_associate]
 }
 
 # Data template Bash bootstrapping file

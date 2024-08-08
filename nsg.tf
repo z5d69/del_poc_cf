@@ -34,6 +34,18 @@ resource "azurerm_network_security_group" "nsgpoccfsub3" {
   location            = azurerm_resource_group.resource_group.location
   resource_group_name = var.resource_group_name
   tags = var.common_tags
+
+  security_rule {
+    name                        = "allowhttp"
+    priority                    = 100
+    direction                   = "Inbound"
+    access                      = "Allow"
+    protocol                    = "Tcp"
+    source_port_range           = "*"
+    destination_port_range      = "80"
+    source_address_prefix       = "*"
+    destination_address_prefix  = "*"
+    }  
 }
 
 resource "azurerm_subnet_network_security_group_association" "nsgasub1" {
